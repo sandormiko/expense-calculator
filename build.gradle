@@ -34,7 +34,7 @@ dependencies {
 }
 
 
-mainClassName = 'backend.challenge.ServerApplication'
+mainClassName = 'expense.calculator.ServerApplication'
 
 run {
 	args 'server', configPath+'server-app.yml'
@@ -52,7 +52,7 @@ test {
 task fatJar(type: Jar) {
 	manifest {
         attributes( 
-        	'Main-Class': 'backend.challenge.ServerApplication'
+        	'Main-Class': 'expense.calculator.ServerApplication'
         	)
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }

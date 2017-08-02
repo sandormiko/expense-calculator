@@ -12,7 +12,7 @@ postgres:
   environment:
       - POSTGRES_USER:'postgres'
       - POSTGRES_PASSWORD:'postgres'
-      - POSTGRES_DB:'engagetech'
+      - POSTGRES_DB:'expenses-db'
   volumes:
    - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
   ports:
