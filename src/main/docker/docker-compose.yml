@@ -1,0 +1,19 @@
+app:
+  image: expense-calculator
+  links:
+    - postgres
+  ports:
+    - 8080:8080
+    
+    
+postgres:
+  restart: always
+  image: postgres:9.5
+  environment:
+      - POSTGRES_USER:'postgres'
+      - POSTGRES_PASSWORD:'postgres'
+      - POSTGRES_DB:'engagetech'
+  volumes:
+   - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+  ports:
+    - "5432:5432"

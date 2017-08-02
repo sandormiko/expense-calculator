@@ -1,0 +1,95 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: 'docker'
+
+version = '0.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+project.ext {
+	dropwizardVersion = '0.9.1'
+	guiceVersion = '4.1.0'
+	dropwizardHibernateVersion = '1.1.1'
+	configPath = "$buildDir/resources/main/"
+	postgresVersion = '9.1-901.jdbc4'
+	h2Version = '1.4.196'
+	junitVersion = '4.12'
+	hamcrestVersion = '1.3'
+}
+
+dependencies {
+	compile group: 'io.dropwizard', name: 'dropwizard-core', version:dropwizardVersion
+	compile group: 'io.dropwizard', name: 'dropwizard-assets', version:dropwizardVersion
+	compile group: 'com.google.inject', name: 'guice', version:guiceVersion
+	compile group: 'io.dropwizard', name: 'dropwizard-hibernate', version:dropwizardHibernateVersion
+	compile group: 'postgresql', name:'postgresql', version:postgresVersion
+	testCompile 	group: 'com.h2database', name:'h2', version:h2Version
+	testCompile 	group: 'junit', name:'junit', version:junitVersion
+	testCompile 	group: 'org.hamcrest', name:'hamcrest-all', version:hamcrestVersion
+}
+
+
+mainClassName = 'backend.challenge.ServerApplication'
+
+run {
+	args 'server', configPath+'server-app.yml'
+}
+
+test {
+    testLogging {
+        
+        events "failed"
+        exceptionFormat "short"
+        info.events = ["failed", "skipped","passed"]
+    }
+}
+
+task fatJar(type: Jar) {
+	manifest {
+        attributes( 
+        	'Main-Class': 'backend.challenge.ServerApplication'
+        	)
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+buildscript {
+    dependencies {
+        classpath('se.transmode.gradle:gradle-docker:1.2')
+    }
+     repositories {
+	        mavenCentral()
+	     
+	    }
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+  push = false
+  applicationName = jar.baseName
+  dockerfile = file('src/main/docker/Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+    copy {
+      from('src/main/resources/server-app.yml')
+      into stageDir
+    }
+    copy {
+      from('src/main/docker/init-db.sh')
+      into stageDir
+    }
+    copy {
+      from('src/main/docker/docker-compose.yml')
+      into stageDir
+    }
+  }
+}
+
