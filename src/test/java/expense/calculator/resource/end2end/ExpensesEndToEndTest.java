@@ -26,7 +26,7 @@ import expense.calculator.resource.ExpensesResource;
 
 public class ExpensesEndToEndTest {
 
-	private static final String H2_URl = "jdbc:h2:./db/engagetech;MODE=PostgreSQL;INIT=runscript from 'classpath:create-db.sql'";
+	private static final String H2_URl = "jdbc:h2:./db/expenses;MODE=PostgreSQL;INIT=runscript from 'classpath:create-db.sql'";
 	private static final String H2_USER = "sa";
 	private static final String H2_DRIVER = "org.h2.Driver";
 	private static final String SESSION_CONTEXT_CLASS = "thread";
